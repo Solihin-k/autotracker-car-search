@@ -40,3 +40,5 @@ data/
 # prisma
 prisma/*.db
 prisma/*.db-journal
+
+/src/generated/prisma

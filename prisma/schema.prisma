@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id               String   @id @default(cuid())
+  sourceId         String
+  source           String   // "sgcarmart" | "carro"
+  url              String
+
+  // Vehicle
+  make             String
+  model            String
+  trim             String?
+  year             Int
+  registrationDate String?
+  mileage          Int?
+  engineCapacity   Int?
+  power            String?
+  transmission     String?  // "auto" | "manual"
+  fuelType         String?  // "petrol" | "diesel" | "hybrid" | "electric"
+  vehicleType      String?
+  color            String?
+  numOwners        Int?
+
+  // Singapore-specific
+  coeExpiryDate    String?
+  coeMonthsLeft    Int?
+  coeCategory      String?  // "A" | "B" | "C" | "E"
+  coePremium       Float?
+  omv              Float?
+  arf              Float?
+  parfEligible     Boolean?
+  parfRebate       Float?
+  coeRebate        Float?
+  paperValue       Float?
+  annualDepreciation Float?
+
+  // Pricing
+  price            Float
+
+  // Seller
+  sellerType       String   // "dealer" | "direct_owner" | "platform"
+  sellerName       String?
+
+  // Images
+  imageCount       Int      @default(0)
+
+  // Metadata
+  listedDate       String?
+  fetchedAt        DateTime @default(now())
+  description      String?
+
+  // Analysis
+  dealScore        Int?
+  dealLabel        String?  // "great" | "good" | "fair" | "overpriced" | "red_flag"
+  analysisNotes    String?  // JSON array stored as string
+  flags            String?  // JSON array stored as string
+
+  // Relations
+  images           ListingImage[]
+  priceHistory     PriceHistory[]
+  savedListing     SavedListing?
+
+  @@unique([source, sourceId])
+  @@index([make, model])
+  @@index([price])
+}
+
+model ListingImage {
+  id             String  @id @default(cuid())
+  listingId      String
+  url            String
+  cachedPath     String?
+  thumbnailPath  String?
+  tags           String? // JSON array stored as string
+  analysisNotes  String?
+  sortOrder      Int     @default(0)
+
+  listing        Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+}
+
+model SavedListing {
+  id          String   @id @default(cuid())
+  listingId   String   @unique
+  status      String   @default("watching") // "watching" | "contacted" | "viewing" | "negotiating" | "passed" | "bought"
+  notes       String   @default("")
+  tags        String   @default("[]") // JSON array stored as string
+  priceAtSave Float
+  addedAt     DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  listingId String
+  price     Float
+  date      DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+}
