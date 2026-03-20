@@ -1,0 +1,51 @@
+import { NextRequest } from "next/server";
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const mockListing = {
+    id: params.id,
+    sourceId: "12345",
+    source: "sgcarmart",
+    url: "https://www.sgcarmart.com/used_cars/info.php?ID=12345",
+    make: "Toyota",
+    model: "Camry",
+    trim: "2.5 Elegance",
+    year: 2021,
+    registrationDate: "2021-03-15",
+    mileage: 35000,
+    engineCapacity: 2487,
+    power: "178bhp",
+    transmission: "auto",
+    fuelType: "petrol",
+    vehicleType: "Sedan",
+    color: "White",
+    numOwners: 1,
+    coeExpiryDate: "2031-03-14",
+    coeMonthsLeft: 60,
+    coeCategory: "B",
+    coePremium: 65000,
+    omv: 25000,
+    arf: 25000,
+    parfEligible: true,
+    parfRebate: 18750,
+    coeRebate: 32500,
+    paperValue: 51250,
+    annualDepreciation: 9350,
+    price: 98000,
+    sellerType: "dealer",
+    sellerName: "Sample Motors Pte Ltd",
+    imageCount: 0,
+    images: [],
+    listedDate: "2026-03-01",
+    fetchedAt: new Date().toISOString(),
+    description: "Well maintained, single owner, full service history.",
+    dealScore: 72,
+    dealLabel: "good",
+    analysisNotes: ["Below average depreciation for segment"],
+    flags: [],
+  };
+
+  return Response.json(mockListing);
+}
